@@ -1,0 +1,184 @@
+// script.js - JavaScript for The Word Ministry International Church
+
+// Mobile Navigation Toggle
+function initMobileNav() {
+    const navToggle = document.querySelector('.nav-toggle');
+    const navMenu = document.querySelector('.headerdiv ul');
+
+    if (navToggle && navMenu) {
+        navToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            navToggle.classList.toggle('active');
+        });
+    }
+}
+
+// WhatsApp Contact Button
+function initWhatsApp() {
+    const whatsappBtn = document.querySelector('.whatsapp-btn');
+    if (whatsappBtn) {
+        whatsappBtn.addEventListener('click', () => {
+            const phone = '+233123456789'; // Replace with actual number
+            const message = 'Hello, I would like to connect with The Word Ministry International Church.';
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        });
+    }
+}
+
+// Sermon Display (Dynamic)
+function initSermons() {
+    const sermonsContainer = document.querySelector('.sermons-container');
+    if (!sermonsContainer) return;
+
+    const sermons = [
+        {
+            title: 'Walking in Faith',
+            date: 'May 3, 2026',
+            videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+            audioUrl: 'sermons/audio/walking_in_faith.mp3',
+            summary: 'This sermon explores the importance of faith in our daily lives.'
+        },
+        {
+            title: 'Spiritual Discipline',
+            date: 'April 26, 2026',
+            videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+            audioUrl: 'sermons/audio/spiritual_discipline.mp3',
+            summary: 'Understanding the role of discipline in Christian growth.'
+        },
+        // Add more sermons as needed
+    ];
+
+    sermons.forEach(sermon => {
+        const sermonDiv = document.createElement('div');
+        sermonDiv.className = 'sermon-item animate-on-scroll';
+        sermonDiv.innerHTML = `
+            <h3>${sermon.title}</h3>
+            <p>Date: ${sermon.date}</p>
+            <iframe width="560" height="315" src="${sermon.videoUrl}" frameborder="0" allowfullscreen></iframe>
+            <p><strong>Summary:</strong> ${sermon.summary}</p>
+            <audio controls>
+                <source src="${sermon.audioUrl}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        `;
+        sermonsContainer.appendChild(sermonDiv);
+    });
+}
+
+// Service Countdown Timer
+function initCountdown() {
+    const countdownElement = document.querySelector('.countdown');
+    if (!countdownElement) return;
+
+    // Set next service date/time (e.g., next Sunday 10:00 AM)
+    const now = new Date();
+    const nextSunday = new Date(now);
+    nextSunday.setDate(now.getDate() + (7 - now.getDay()));
+    nextSunday.setHours(10, 0, 0, 0);
+
+    if (nextSunday <= now) {
+        nextSunday.setDate(nextSunday.getDate() + 7);
+    }
+
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = nextSunday.getTime() - now;
+
+        if (distance < 0) {
+            countdownElement.innerHTML = 'Service is live!';
+            return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        countdownElement.innerHTML = `Next Service: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+}
+
+// Form Handling
+function initForms() {
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Simple confirmation (later connect to backend)
+            alert('Thank you for your submission! We will get back to you soon.');
+            form.reset();
+        });
+    });
+}
+
+// Scroll Animations
+function initScrollAnimations() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+
+    const animateElements = document.querySelectorAll('.animate-on-scroll');
+    animateElements.forEach(el => observer.observe(el));
+}
+
+// Plan Your Visit Popup
+function initPopup() {
+    const popup = document.createElement('div');
+    popup.className = 'popup-overlay';
+    popup.innerHTML = `
+        <div class="popup-content">
+            <span class="popup-close">&times;</span>
+            <h2>Plan Your Visit</h2>
+            <p>We're excited to welcome you to our church! Here's how to prepare for your first visit.</p>
+            <ul>
+                <li>Services start at 10:00 AM on Sundays</li>
+                <li>Dress code is casual</li>
+                <li>Parking available on site</li>
+                <li>Children's ministry available</li>
+            </ul>
+            <a href="contact.html" class="cta-button">Contact Us</a>
+        </div>
+    `;
+    document.body.appendChild(popup);
+
+    // Show popup after 5 seconds
+    setTimeout(() => {
+        popup.style.display = 'flex';
+    }, 5000);
+
+    // Close popup
+    const closeBtn = popup.querySelector('.popup-close');
+    closeBtn.addEventListener('click', () => {
+        popup.style.display = 'none';
+    });
+
+    popup.addEventListener('click', (e) => {
+        if (e.target === popup) {
+            popup.style.display = 'none';
+        }
+    });
+}
+
+// Initialize all functions when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    initMobileNav();
+    initWhatsApp();
+    initSermons();
+    initCountdown();
+    initForms();
+    initScrollAnimations();
+    initPopup();
+});
